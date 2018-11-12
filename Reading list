@@ -1,1 +1,10 @@
-
+1.Semantic segmentation
+旷视科技提出新方法：通过实例级显著性检测和图划分实现弱监督语义分割
+ttp://mftp.mmcheng.net/Papers/18ECCVGraphPartition.pdf
+旷视科技提出双向网络BiSeNet：实现实时语义分割
+https://arxiv.org/abs/1808.00897
+Semantic Soft Segmentation
+http://cfg.mit.edu/sites/cfg.mit.edu/files/sss_3.pdf
+2.Object Detection
+https://www.jiqizhixin.com/articles/092301?from=synced&keyword=%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B
+3.点云分割
