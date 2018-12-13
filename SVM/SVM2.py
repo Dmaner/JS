@@ -199,8 +199,8 @@ def testrbf(train_path, test_path, C, toler, kernel_name, maxIter, weight=None):
     print("The test error rate is {:.3f}".format(float(errorCount_test)/m))
 
 def main():
-    filename_traindata='data/just_point/testdata.txt'
-    filename_testdata='data/just_point/testdata.txt'
+    filename_traindata='testdata.txt'
+    filename_testdata='testdata.txt'
     testrbf(filename_traindata, filename_testdata, C, toler, 'rbf', itertion, 1.3)
 
 if __name__ == '__main__':
