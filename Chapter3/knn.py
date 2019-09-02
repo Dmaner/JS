@@ -59,7 +59,7 @@ class TreeNode:
 class Kd_Tree:
     def __init__(self, data, target):
         dimension = data.shape[1]
-        data = np.concatenate((data, target.reshape(-1,1)), axis=1)
+        data = np.concatenate((data, target.reshape(-1, 1)), axis=1)
         sort_dimension = 0
         self.root = self.build(data, dimension, sort_dimension)
 
@@ -73,7 +73,7 @@ class Kd_Tree:
             mid = len(data) // 2
             root = TreeNode(data[mid][:-1], data[mid][-1])
             root.left = self.build(data[:mid], d, (k + 1) % d)
-            root.right = self.build(data[mid + 1 :], d, (k + 1) % d)
+            root.right = self.build(data[mid + 1:], d, (k + 1) % d)
         return root
 
     def MinNode(self, node, data):
