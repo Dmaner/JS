@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import pprint as pp
+from time import clock
 
 digits = load_digits()
 data = digits.data
@@ -13,7 +13,7 @@ target = digits.target
 feature_len = data.shape[1]
 ent_threshold = 0.1
 img_threshold = 4
-x_train, x_test, y_train,y_test = train_test_split(data,target,test_size=0.05)
+x_train, x_test, y_train,y_test = train_test_split(data,target,test_size=0.3)
 
 def preprocess(images):
     '''
@@ -30,6 +30,18 @@ preprocess(x_test)
 # plt.imshow(x_train[0].reshape(8,8), cmap="gray")
 # plt.title(y_train[0])
 # plt.show()
+cost_dict = {}
+call_dict = {}
+def cost(func):
+    def decorater(*args, **kwargs):
+        begin = clock()
+        val = func(*args, **kwargs)
+        end = clock()
+        name = func.__name__
+        cost_dict[name] = cost_dict.setdefault(name, 0) + end-begin
+        call_dict[name] = call_dict.setdefault(name, 0) + 1
+        return val
+    return decorater
 
 class DT_ID3():
     '''
@@ -42,6 +54,7 @@ class DT_ID3():
         self.total_features = num_feature
         self.get_the_ID_3_Tree()
 
+    @cost
     def cal_ent(self, D):
         '''
         :param D: ndarray
@@ -58,6 +71,7 @@ class DT_ID3():
 
         return HD
 
+    @cost
     def cal_condition_ent(self, feature_col, y_train):
 
         total_labels = len(y_train)
@@ -68,6 +82,7 @@ class DT_ID3():
 
         return neg_H_DA
 
+    @cost
     def information_gain(self,feature_col, y_train):
 
         return self.cal_condition_ent(feature_col, y_train)+self.cal_ent(y_train)
@@ -82,6 +97,7 @@ class DT_ID3():
 
         return True
 
+    @cost
     def find_max_feature(self, x_train, feature_set, y_train):
         best_feature = feature_set[1]
         best_value = self.information_gain(x_train[:,best_feature], y_train)
@@ -120,7 +136,7 @@ class DT_ID3():
             node['name'] = 'leaf'
             return node
 
-        if len(feature_set) == 1:
+        if len(feature_set) == 0:
             node['class'] = self.find_max_label(y_train)
             node['name'] = 'leaf'
             return node
@@ -182,3 +198,5 @@ for idx, sample in enumerate(x_test):
     if real_label == pred:
         correct+=1
 print("accuracy: {:.2f}%".format(correct/count*100))
+print(cost_dict)
+print(call_dict)

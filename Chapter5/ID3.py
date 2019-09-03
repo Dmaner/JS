@@ -4,18 +4,11 @@
 # Author: DMAN
 # Dataset: digit
 
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
 from collections import Counter
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 
-digit = load_digits()
-x = digit["data"]
-y = digit["target"]
-
-x_train, x_test, y_train,y_test = train_test_split(x, y, test_size=0.3)
+# import matplotlib.pyplot as plt
 
 # def show():
 #     images = digit.images
@@ -30,8 +23,6 @@ x_train, x_test, y_train,y_test = train_test_split(x, y, test_size=0.3)
 
 LEAF = "Leaf"
 NODE = "Node"
-
-# too slow for using treenode
 
 class TreeNode:
     def __init__(self, name, feature=None, val=None):
@@ -48,8 +39,8 @@ class TreeNode:
             self.one = None
             self.zero = None
 
-
 class ID3:
+
     def __init__(self, data, target):
         data = self.binarization(data)
         self.classes = set(target)
@@ -63,8 +54,10 @@ class ID3:
         """
         H_D = 0
         D = len(x)
-        for i in self.classes:
-            C_k = sum(x==i)
+        classes = set(x)
+        for i in classes:
+            C_k = len(x[(x==i)])
+            # never using sum(x==i) it will be so slow
             if C_k:
                 H_D -= C_k / D * math.log(C_k / D, 2)
 
@@ -77,9 +70,8 @@ class ID3:
         D = len(target)
         ones = feature_column == 0
         zeros = feature_column == 1
-        H_D_A = sum(ones) / D * self.cal_entropy(target[ones]) + sum(
-            zeros
-        ) / D * self.cal_entropy(target[zeros])
+        H_D_A = len(feature_column[ones]) / D * self.cal_entropy(target[ones]) + \
+                len(feature_column[zeros]) / D * self.cal_entropy(target[zeros])
 
         return H_D_A
 
@@ -94,14 +86,24 @@ class ID3:
 
         return int(counter.most_common(1)[0][0])
 
+    def emptycheck(self, target, feature_column):
+
+        pos_index = feature_column == 1
+        neg_index = feature_column == 0
+
+        if len(target[pos_index]) == 0 or len(target[neg_index]) == 0:
+            return False
+        return True
+
     def findmaxfeature(self, target, data, features):
         best_feature = features[0]
         index = 0
         best_value = self.info_gain(target, data[:, best_feature])
         for i in range(1, len(features)):
             feature = features[i]
-            value = self.info_gain(target, data[:, feature])
-            if value > best_value:
+            column = data[:, feature]
+            value = self.info_gain(target, column)
+            if value > best_value and self.emptycheck(target, column):
                 best_feature = feature
                 best_value = value
                 index = i
@@ -119,17 +121,15 @@ class ID3:
             return TreeNode(LEAF, val=self.findmaxlabel(target))
         else:
             new_feature_set, best_feature, best_value = self.findmaxfeature(target, data, features)
-            if best_value < self.threshold:
-                return TreeNode(LEAF, val = self.findmaxlabel(target))
             feature_col = data[:,best_feature]
             pos_index = feature_col == 1
             neg_index = feature_col == 0
-            if len(pos_index) == 0 or len(neg_index) == 0:
+            if len(pos_index) == 0 or len(neg_index)==0 or best_value < self.threshold:
                 return TreeNode(LEAF, val=self.findmaxlabel(target))
             else:
                 node = TreeNode(NODE, feature=best_feature)
-                node.zero = self.build(data[neg_index], target[neg_index], new_feature_set)
                 node.one = self.build(data[pos_index], target[pos_index], new_feature_set)
+                node.zero = self.build(data[neg_index], target[neg_index], new_feature_set)
                 return node
 
     def predict(self, x):
@@ -158,9 +158,3 @@ class ID3:
                 correct += 1
             total += 1
         return correct / total
-
-
-if __name__ == "__main__":
-    model = ID3(x_train, y_train)
-    print("Finish training")
-    print("Accuracy: {:.2f}%".format(100*model.test(x_test, y_test)))
