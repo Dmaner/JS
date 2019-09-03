@@ -113,7 +113,6 @@ class DT_ID3():
         node = {}
 
         if len(y_train) == 0:
-            len(x_train)
             return None
 
         if len(y_train) == len(y_train[y_train == y_train[0]]):
@@ -177,7 +176,6 @@ class DT_ID3():
 model = DT_ID3(x_train, y_train)
 count = len(x_test)
 correct = 0
-print(model.DT)
 for idx, sample in enumerate(x_test):
     real_label = y_test[idx]
     pred = model.predict(sample)
