@@ -1,7 +1,7 @@
-from Chapter5 import ID3
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from time import clock
+from Model import ID3, C45
 
 def record(func):
     def decorater(self, *args, **kwargs):
@@ -16,8 +16,7 @@ def record(func):
 digit = load_digits()
 x = digit["data"]
 y = digit["target"]
-
-x_train, x_test, y_train,y_test = train_test_split(x, y, test_size=0.3)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
 def cost(func):
     def decorater(*args, **kwargs):
@@ -30,11 +29,12 @@ def cost(func):
     return decorater
 
 @cost
-def testid3():
-    model = ID3.ID3(x_train, y_train)
-    print("ID3 Finish training")
-    print("Accuracy: {:.2f}%".format(100*model.test(x_test, y_test)))
+def test(x_train, x_test, y_train,y_test, Model):
+    model = Model(x_train.copy(), y_train.copy())
+    print("{} finish training".format(model))
+    print("Accuracy: {:.2f}%".format(100*model.test(x_test.copy(), y_test.copy())))
+
 
 if __name__ == '__main__':
-    testid3()
-
+    test(x_train, x_test, y_train, y_test, ID3.Model)
+    test(x_train, x_test, y_train, y_test, C45.Model)

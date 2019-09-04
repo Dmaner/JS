@@ -39,7 +39,7 @@ class TreeNode:
             self.one = None
             self.zero = None
 
-class ID3:
+class Model(object):
 
     def __init__(self, data, target):
         data = self.binarization(data)
@@ -47,6 +47,9 @@ class ID3:
         self.threshold = 0.1
         features = [x for x in range(0, data.shape[1])]
         self.tree = self.build(data, target, features)
+
+    def __repr__(self):
+        return "ID3 algorithm"
 
     def cal_entropy(self, x):
         """
@@ -98,12 +101,14 @@ class ID3:
     def findmaxfeature(self, target, data, features):
         best_feature = features[0]
         index = 0
-        best_value = self.info_gain(target, data[:, best_feature])
+        best_value = 0
         for i in range(1, len(features)):
             feature = features[i]
             column = data[:, feature]
+            if not self.emptycheck(target, column):
+                continue
             value = self.info_gain(target, column)
-            if value > best_value and self.emptycheck(target, column):
+            if value > best_value:
                 best_feature = feature
                 best_value = value
                 index = i
@@ -124,7 +129,7 @@ class ID3:
             feature_col = data[:,best_feature]
             pos_index = feature_col == 1
             neg_index = feature_col == 0
-            if len(pos_index) == 0 or len(neg_index)==0 or best_value < self.threshold:
+            if best_value < self.threshold:
                 return TreeNode(LEAF, val=self.findmaxlabel(target))
             else:
                 node = TreeNode(NODE, feature=best_feature)
