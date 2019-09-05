@@ -1,9 +1,3 @@
-# -*-coding:utf-8-*-
-# Project: CH03
-# Filename: decision tree
-# Author: DMAN
-# Dataset: digit
-
 from collections import Counter
 import numpy as np
 import math
@@ -29,8 +23,6 @@ class TreeNode:
         self.NodeName = name
         if name == LEAF and val == None:
             raise Exception("Leaf doesn't have value!")
-        elif name == NODE and val != None:
-            raise Exception("Node's value should be None!")
         elif name != NODE and name != LEAF:
             raise Exception("Naming exception!")
         else:
@@ -163,3 +155,53 @@ class Model(object):
                 correct += 1
             total += 1
         return correct / total
+
+class pruningID3(Model):
+
+    def __init__(self, data, target):
+        super().__init__(data, target)
+        # self.tree = self.pruning(self.tree)
+
+    def __repr__(self):
+        return "pruning id3 algorithm"
+
+    def pruning(self, root):
+        if root.NodeName == LEAF:
+            return root
+        else:
+            one = self.pruning(root.one)
+            zero = self.pruning(root.zero)
+            if one.c + zero.c > root.c:
+                root.NodeName = LEAF
+            else:
+                root.c = one.c + zero.c
+            return root
+    
+    def calc(self, node, target):
+        """
+        calculate the leaf node's loss function
+        """
+        alpha = 0.1
+        node.c = alpha + self.cal_entropy(target)*len(target)
+        
+        return node
+
+    def build(self, data, target, features):
+        if len(target) == 0:
+            return None
+        elif len(set(target)) == 1:
+            return self.calc(TreeNode(LEAF, val=target[0]), target)
+        elif len(features) == 0:
+            return self.calc(TreeNode(LEAF, val=self.findmaxlabel(target)), target)
+        else:
+            new_feature_set, best_feature, best_value = self.findmaxfeature(target, data, features)
+            feature_col = data[:,best_feature]
+            pos_index = feature_col == 1
+            neg_index = feature_col == 0
+            if best_value < self.threshold:
+                return self.calc(TreeNode(LEAF, val=self.findmaxlabel(target)), target)
+            else:
+                node = TreeNode(NODE, feature=best_feature, val=self.findmaxlabel(target))
+                node.one = self.build(data[pos_index], target[pos_index], new_feature_set)
+                node.zero = self.build(data[neg_index], target[neg_index], new_feature_set)
+                return self.calc(node, target)

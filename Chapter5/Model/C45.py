@@ -1,9 +1,3 @@
-# -*-coding:utf-8-*-
-# Project: CH03
-# Filename: decision tree
-# Author: DMAN
-# Dataset: digit
-
 from . import ID3
 from math import log
 

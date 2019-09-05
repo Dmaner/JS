@@ -1,7 +1,13 @@
+# -*-coding:utf-8-*-
+# Project: CH03
+# Filename: decision tree
+# Author: DMAN
+# Dataset: digit
+
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from time import clock
-from Model import ID3, C45
+from Model import ID3, C45, CART
 
 def record(func):
     def decorater(self, *args, **kwargs):
@@ -38,3 +44,5 @@ def test(x_train, x_test, y_train,y_test, Model):
 if __name__ == '__main__':
     test(x_train, x_test, y_train, y_test, ID3.Model)
     test(x_train, x_test, y_train, y_test, C45.Model)
+    test(x_train, x_test, y_train, y_test, ID3.pruningID3)
+    test(x_train, x_test, y_train, y_test, CART.ClaModel)
