@@ -1,5 +1,3 @@
-import numpy as np
-from sklearn.datasets import load_breast_cancer
 from .ID3 import *
 
 
@@ -44,7 +42,7 @@ class RegModel():
         return best_feature, best_s
 
     def build(self, data, target, features):
-        j, s = self.find_j_s(data, target, features)
+        j, s = self.find_j(data, target, features)
 
 
 class ClaModel(Model):

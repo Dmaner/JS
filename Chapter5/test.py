@@ -1,5 +1,5 @@
 # -*-coding:utf-8-*-
-# Project: CH03
+# Project: CH04
 # Filename: decision tree
 # Author: DMAN
 # Dataset: digit
