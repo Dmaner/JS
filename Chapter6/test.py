@@ -64,6 +64,7 @@ class MaxEnt(object):
         result = 0.0
         for x in X:
             if self.fxy(x, y):
+
                 id = self.xy2id[(x, y)]
                 result += self.w[id]
         return (np.exp(result), y)
