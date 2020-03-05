@@ -1,6 +1,5 @@
 # 统计方法学习
 ### *对每一章算法的代码实现*
----
 ## 目录
 
 * [第二章 感知机](Chapter2/Perceptron.py)
@@ -9,4 +8,8 @@
 * [第五章 决策树算法](Chapter5)  
 * [第六章 逻辑斯底回归](LR)  
 * [第七章 SVM](SVM2.py) 
+* [第八章 Adaboost]()
 
+## _TODO_
+- [ ] 阅读sklearn源码
+- [ ] 添加xgboost到addition
